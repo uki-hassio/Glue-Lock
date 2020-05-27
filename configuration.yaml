@@ -1,0 +1,26 @@
+# Glue Lock
+sensor:
+  - platform: rest
+    resource: https://api.gluehome.com/api/Locks/LOCK_ID/
+    name: frontdoor_sensor
+    method: GET
+    authentication: basic
+    username: USERNAME
+    password: PASSWORD
+    json_attributes:
+      - Status
+      - BatteryStatusAfter
+    value_template: 'OK'
+  - platform: template
+    sensors:
+        forntdoor_status:
+            value_template: '{{ states.sensor.frontdoor_sensor.attributes["Status"] }}'
+        forntdoor_battery:
+            value_template: '{{ (states.sensor.frontdoor_sensor.attributes["BatteryStatusAfter"] | int /255 * 100) | int }}'
+            
+switch:
+  - platform: command_line
+    switches:
+        frontdoor_lock:
+            command_on: "curl --user USERNAME:PASSWORD -d '{\"LockId\":\"LOCK_ID\",\"HubCommand\":\"1\"}' -H 'Content-Type: application/json' https://api.gluehome.com/api/Hubs/HUB_ID/Commands"
+            command_off: "curl --user USERNAME:PASSWORD -d '{\"LockId\":\"LOCK_ID\",\"HubCommand\":\"0\"}' -H 'Content-Type: application/json' https://api.gluehome.com/api/Hubs/HUB_ID/Commands"
