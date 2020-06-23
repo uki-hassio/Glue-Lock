@@ -13,9 +13,9 @@ sensor:
     value_template: 'OK'
   - platform: template
     sensors:
-        forntdoor_status:
+        frontdoor_status:
             value_template: '{{ states.sensor.frontdoor_sensor.attributes["Status"] }}'
-        forntdoor_battery:
+        frontdoor_battery:
             value_template: '{{ (states.sensor.frontdoor_sensor.attributes["BatteryStatusAfter"] | int /255 * 100) | int }}'
             
 switch:
